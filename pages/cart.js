@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   removeFromCart,
@@ -8,12 +8,50 @@ import {
 import PathBackButton from "@/components/PathBackButton";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import SignInUpLofinForm from "@/components/SignInUpLofinForm";
 
 const cart = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [open, setOpen] = useState(false);
+
   const dispatch = useDispatch();
   const { cartItems, totalQuantity, totalAmount } = useSelector(
     (state) => state.cart
   );
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      name,
+      email,
+      password,
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(
+      "https://shop-now-backend-chi.vercel.app/api/auth/signup",
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("Signup Success:", result);
+        // Optional: Show success message or redirect
+      })
+      .catch((error) => {
+        console.error("Signup Error:", error);
+      });
+  };
   /* If there is no Item In Cart */
   if (cartItems.length === 0) {
     return (
@@ -28,12 +66,8 @@ const cart = () => {
     <>
       <Head>
         <meta charSet="utf-8" />
-        
-        <title>
-          {
-            "ShopNow - Your Smart Shopping Destination."
-          }
-        </title>
+
+        <title>{"ShopNow - Your Smart Shopping Destination."}</title>
         <meta
           name="description"
           content={
@@ -43,23 +77,11 @@ const cart = () => {
         <link rel="canonical" href="https://shop-now-chi.vercel.app/" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
 
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="headLogo.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="headLogo.png"
-        />
+        <link rel="icon" type="image/png" sizes="32x32" href="headLogo.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="headLogo.png" />
         <meta
           property="og:title"
-          content={
-            "ShopNow - Your Smart Shopping Destination."
-          }
+          content={"ShopNow - Your Smart Shopping Destination."}
         />
         <meta property="og:type" content="website" />
         <meta
@@ -71,21 +93,26 @@ const cart = () => {
         <meta name="robots" content="max-image-preview:large"></meta>
         <meta name="robots" content="NOODP" />
         <meta property="og:url" content="https://shop-now-chi.vercel.app/" />
-        <meta
-          property="og:image"
-          content="headLogo.png"
-        />
-     
-       
+        <meta property="og:image" content="headLogo.png" />
+
         <meta name="mobile-web-app-capable" content="yes" />
         <meta property="og:image:width" content="200" />
         <meta property="og:image:height" content="200" />
-      
       </Head>
       <PathBackButton />
-
+      <SignInUpLofinForm
+        setOpen={setOpen}
+        open={open}
+        setPassword={setPassword}
+        password={password}
+        setEmail={setEmail}
+        email={email}
+        setName={setName}
+        name={name}
+        handleSubmit={handleSubmit}
+      />
       <div className="max-w-4xl mx-auto p-4 h-screen">
-        <h2 className=" font-bold mb-4">Your Cart</h2>
+        <h1 className=" font-bold mb-4">Your Cart</h1>
 
         <div className="space-y-4">
           {cartItems.map((item) => (
@@ -93,23 +120,23 @@ const cart = () => {
               key={item.id}
               className="flex items-center justify-between border p-3 rounded-lg shadow"
             >
-              <div
-               
-                className="flex items-center space-x-4 md:w-2/3 w-4/5 "
-              >
+              <div className="flex items-center space-x-4 md:w-2/3 w-4/5 ">
                 <img
                   src={item.image}
                   alt={item.title}
                   className="w-16 h-16 object-contain"
                 />
-                <div   className="w-full">
-                  <div onClick={() => router.push(`/products/${item.id}`)} className="cursor-pointer">
+                <div className="w-full">
+                  <div
+                    onClick={() => router.push(`/products/${item.id}`)}
+                    className="cursor-pointer"
+                  >
                     <div className="font-normal text-[12px] line-clamp-2 lg:text-[14px] ">
-                    {item.title}
+                      {item.title}
+                    </div>
+                    <div className="text-sm  ">₹ {item.price}</div>
                   </div>
-                  <div className="text-sm  ">₹ {item.price}</div>
-                  </div>
-                  
+
                   <div>
                     <div className="flex items-center md:space-x-3 space-x-1 mt-2 md:hidden cursor-pointer">
                       <button
@@ -164,8 +191,12 @@ const cart = () => {
             </div>
           ))}
         </div>
+        <div>
+       
+        </div>
 
         <div className="mt-10 border-t border-gray-500 pt-4 text-right">
+        <p onClick={()=>setOpen(true)} className="mt-10 border-t border-gray-500 pt-4 text-left">Checkout</p>
           <p className=" font-md">Total Quantity: {totalQuantity}</p>
           <p className=" font-md">Total: ₹ {totalAmount}</p>
         </div>
