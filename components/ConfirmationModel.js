@@ -38,14 +38,13 @@ const ConfirmationModal = ({
               <Dialog.Title className="text-[16px] font-semibold text-center">
                 {title}
               </Dialog.Title>
-              <div className="mt-2 text-[14px] text-center ">
-                {message}
-              </div>
+              <div className="mt-2 text-[14px] text-center ">{message}</div>
+              {/* for Mobile */}
 
-              <div className="mt-4 flex justify-end gap-2">
+              <div className="mt-4 flex justify-center gap-2 md:hidden">
                 <button
                   onClick={onClose}
-                  className="rounded-md px-4 py-2 text-sm bg-gray-500 text-white hover:text-gray-800"
+                  className="rounded-md px-4 py-2 text-sm bg-gray-500 text-white "
                 >
                   Cancel
                 </button>
@@ -55,7 +54,25 @@ const ConfirmationModal = ({
                     onClose();
                     closeSidebar();
                   }}
-                  className="rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-800"
+                  className="rounded-md bg-blue-500 px-4 py-2 text-sm text-white "
+                >
+                  Confirm
+                </button>
+              </div>
+              {/* for desktop */}
+              <div className="mt-4 md:flex justify-center gap-2 hidden">
+                <button
+                  onClick={onClose}
+                  className="rounded-md px-4 py-2 text-sm bg-gray-500 text-white  cursor-pointer hover:bg-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    onConfirm();
+                    onClose();
+                  }}
+                  className="rounded-md bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-800 cursor-pointer"
                 >
                   Confirm
                 </button>

@@ -7,15 +7,16 @@ export const AuthProvider = ({ children }) => {
   const [messageText, setMessageText] = useState("");
   const [messageOpen, setMessageOpen] = useState(false);
   const [showSignin, setShowSignin] = useState(false);
-  const [signUpModelOpen, setSignUpModelOpen] = useState(false);
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
   const [signUpLoader, setSignUpLoader] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
-/*   useEffect(() => {
+   useEffect(() => {
     const storedUser = sessionStorage.getItem("userDetails");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, [user]); */
+  }, []); 
   const messageCloseFunc = () => {
     setTimeout(() => {
       setMessageOpen(false);
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }) => {
       .then((result) => {
         if (result.succss == true) {
           setShowSignin(false);
+          setSignUpSuccess(true);
           setMessageText("Signup successful.Please Login.");
           setMessageOpen(true);
           messageCloseFunc();
@@ -83,11 +85,11 @@ export const AuthProvider = ({ children }) => {
       .then((result) => {
         if (result.succss == true) {
           setUser(result)
-         // sessionStorage.setItem("userDetails", JSON.stringify(result));
+          sessionStorage.setItem("userDetails", JSON.stringify(result));
           setMessageText(result.message);
+          setLoginSuccess(true)
           setMessageOpen(true);
           messageCloseFunc();
-          setSignUpModelOpen(false);
         }
       })
       .catch((error) => {
@@ -100,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
   const LogoutFunc = () => {
     setUser(null);
-  //  sessionStorage.removeItem("userDetails");
+    sessionStorage.removeItem("userDetails");
   };
 
   return (
@@ -116,10 +118,10 @@ export const AuthProvider = ({ children }) => {
         messageText,
         setSignUpLoader,
         signUpLoader,
-        setSignUpModelOpen,
-        signUpModelOpen,
         setShowSignin,
         showSignin,
+        loginSuccess,
+        signUpSuccess
       }}
     >
       {children}

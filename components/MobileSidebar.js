@@ -2,16 +2,16 @@ import { useContext, useState } from "react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "@/context/AuthContext";
 import ConfirmationModal from "./ConfirmationModel";
+import SignInUpLofinForm from "./SignInUpLofinForm";
 
 export default function MobileSidebar(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-  const { LogoutFunc, user, signUpModelOpen, setSignUpModelOpen } =
-    useContext(AuthContext);
+  const [open, setOpen] = useState(false);
+  const { LogoutFunc, user } = useContext(AuthContext);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
-
   return (
     <div className="md:hidden">
       <ConfirmationModal
@@ -22,6 +22,7 @@ export default function MobileSidebar(props) {
         title="Log out"
         message="Are you sure you want to logout."
       />
+      <SignInUpLofinForm setOpen={setOpen} open={open} />
 
       <button onClick={toggleSidebar} className="p-2">
         <Bars3Icon className="w-6 h-6 " />
@@ -54,6 +55,9 @@ export default function MobileSidebar(props) {
             <div className="text-lg font-semibold">
               {user ? user.name : "User"}
             </div>
+            <div className="text-[12px] font-semibold">
+              {user ? user.email : ""}
+            </div>
           </div>
 
           <button onClick={toggleSidebar}>
@@ -68,9 +72,15 @@ export default function MobileSidebar(props) {
           <a href="/cart" className="">
             Cart
           </a>
-          <div onClick={() => setOpenConfirmModal(true)} className=" ">
-            {user ? "Sign Out" : "Login"}
-          </div>
+          {user ? (
+            <div onClick={() => setOpenConfirmModal(true)} className=" ">
+              Log Out
+            </div>
+          ) : (
+            <div onClick={() => setOpen(true)} className=" ">
+              Login
+            </div>
+          )}
         </nav>
       </div>
     </div>

@@ -22,17 +22,29 @@ const SignInUpLofinForm = (props) => {
     showSignin,
     setShowSignin,
     signUpLoader,
+    loginSuccess,
+    signUpSuccess
   } = useContext(AuthContext);
   /* SignUp */
   const signUpHandleSubmit = (e) => {
   
     e.preventDefault();
     handleSubmitSignUp({ name, email, password });
+    if (signUpSuccess) {
+      setName("")
+      setEmail("")
+      setPassword("")
+    }
+   
   };
 
   const loginHandleSubmit = (e) => {
     e.preventDefault();
     handleSubmitLogin({ email, password });
+    if (loginSuccess) {
+      setEmail("")
+      setPassword("")
+    }
    
   };
   return (
@@ -42,7 +54,7 @@ const SignInUpLofinForm = (props) => {
         className="relative z-50 sm:block"
         initialFocus={cancelButtonRef}
         onClose={() => {
-          props.setOpen(false);
+          props.setOpen(false); setShowSignin(false);
         }}
       >
         <Transition.Child
@@ -54,7 +66,7 @@ const SignInUpLofinForm = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0  transition-opacity" />
+          <div className="fixed inset-0  transition-opacity backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-50 flex items-center justify-center p-2 m-2">
@@ -85,7 +97,7 @@ const SignInUpLofinForm = (props) => {
                     type="button"
                     className="absolute top-3 right-2.5  bg-transparent  rounded-lg text-sm p-1.5 ml-auto inline-flex border border-red-500 dark:hover:bg-red-200 dark:hover:text-white"
                     onClick={() => {
-                      props.setOpen(false);
+                      props.setOpen(false); setShowSignin(false);
                     }}
                     ref={cancelButtonRef}
                   >
@@ -162,9 +174,9 @@ const SignInUpLofinForm = (props) => {
                   {signUpLoader ?
                     <div
                   
-                    className="w-full cursor-none bg-gray-500 text-white py-2 rounded-lg hover:bg-blue-700 transition text-center"
+                    className="w-full cursor-none bg-gray-500 text-white py-2 rounded-lg  transition  animate-pulse text-center"
                   >
-                    ...Loading
+                    Please wait...
                   </div>
                   : <button
                     type="submit"
