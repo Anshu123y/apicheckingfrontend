@@ -2,7 +2,7 @@ import { Fragment, useContext, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ThemeColor } from "@/context/ThemeContext";
 import { AuthContext } from "@/context/AuthContext";
-import MessageFunc from "./Message";
+import MessageFunc from "./MessageModal";
 
 const SignInUpLofinForm = (props) => {
   const [showPassword, setShowPassword] = useState(false);

@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import SignInUpLofinForm from "@/components/SignInUpLofinForm";
 import { AuthContext } from "@/context/AuthContext";
-import MessageFunc from "@/components/Message";
+import MessageFunc from "@/components/MessageModal";
 
 const cart = () => {
   const [open, setOpen] = useState(false);
@@ -62,12 +62,19 @@ const cart = () => {
     // Get order data from your API
     const data = await fetch("/api/razorpay", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amount: totalAmount, // send dynamic amount in paise
+      }),
     }).then((res) => res.json());
+    
 
     // Options for the Razorpay checkout modal
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Public Key from Razorpay dashboard
-      amount: totalAmount, // Amount in paise
+      amount: data.amount, // Amount in paise
       currency: data.currency,
       name: "ShoNow",
       description: "Test Transaction",
