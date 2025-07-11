@@ -10,16 +10,23 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import SignInUpLofinForm from "@/components/SignInUpLofinForm";
 import { AuthContext } from "@/context/AuthContext";
+import MessageFunc from "@/components/Message";
 
 const cart = () => {
   const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [openMessage, setOpenMessage] = useState(false);
   const { user } = useContext(AuthContext);
 
   const dispatch = useDispatch();
   const { cartItems, totalQuantity, totalAmount } = useSelector(
     (state) => state.cart
   );
-
+  const messageCloseFunc = () => {
+    setTimeout(() => {
+      setOpenMessage(false);
+    }, 5000);
+  };
   // Function to load the Razorpay script dynamically
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -46,7 +53,9 @@ const cart = () => {
     const res = await loadRazorpayScript();
 
     if (!res) {
-      alert("Failed to load Razorpay SDK. Please try again later.");
+      setOpenMessage(true)
+      messageCloseFunc()
+      setMessage("Failed to load Razorpay SDK. Please try again later.");
       return;
     }
 
@@ -64,7 +73,9 @@ const cart = () => {
       description: "Test Transaction",
       order_id: data.id, // The order ID received from Razorpay API
       handler: function (response) {
-        alert("Payment successful!");
+        setOpenMessage(true)
+        messageCloseFunc()
+        setMessage("Payment successful!");
         console.log("Payment ID:", response.razorpay_payment_id);
         console.log("Order ID:", response.razorpay_order_id);
         console.log("Signature:", response.razorpay_signature);
@@ -138,7 +149,12 @@ const cart = () => {
       <SignInUpLofinForm setOpen={setOpen} open={open} />
       <div className="max-w-4xl mx-auto p-4 h-screen">
         <h1 className=" font-bold mb-4">Your Cart</h1>
-
+        <MessageFunc
+                message={message}
+                setMessageOpen={setOpenMessage}
+                messageOpen={openMessage}
+                onClose={() => setOpenMessage(false)}
+              />
         <div className="space-y-4">
           {cartItems.map((item) => (
             <div
