@@ -4,6 +4,7 @@ import {
   removeFromCart,
   increaseQuantity,
   decreaseQuantity,
+  clearCart
 } from "@/redux/cartSlice";
 import PathBackButton from "@/components/PathBackButton";
 import { useRouter } from "next/router";
@@ -17,15 +18,14 @@ const cart = () => {
   const [message, setMessage] = useState("");
   const [openMessage, setOpenMessage] = useState(false);
   const { user } = useContext(AuthContext);
-
   const dispatch = useDispatch();
-  const { cartItems, totalQuantity, totalAmount } = useSelector(
+  const { cartItems, totalQuantity, totalAmount, } = useSelector(
     (state) => state.cart
   );
   const messageCloseFunc = () => {
     setTimeout(() => {
       setOpenMessage(false);
-    }, 5000);
+    }, 10000);
   };
   // Function to load the Razorpay script dynamically
   const loadRazorpayScript = () => {
@@ -53,9 +53,9 @@ const cart = () => {
     const res = await loadRazorpayScript();
 
     if (!res) {
-      setOpenMessage(true)
-      messageCloseFunc()
-      setMessage("Failed to load Razorpay SDK. Please try again later.");
+      setOpenMessage(true);
+      messageCloseFunc();
+      setMessage("Failed to Open Razorpay. Please try again later.");
       return;
     }
 
@@ -66,10 +66,9 @@ const cart = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: totalAmount, // send dynamic amount in paise
+        amount: totalAmount * 100, // send dynamic amount in paise
       }),
     }).then((res) => res.json());
-    
 
     // Options for the Razorpay checkout modal
     const options = {
@@ -80,23 +79,22 @@ const cart = () => {
       description: "Test Transaction",
       order_id: data.id, // The order ID received from Razorpay API
       handler: function (response) {
-        setOpenMessage(true)
-        messageCloseFunc()
-        setMessage("Payment successful!");
-        console.log("Payment ID:", response.razorpay_payment_id);
-        console.log("Order ID:", response.razorpay_order_id);
-        console.log("Signature:", response.razorpay_signature);
+        setOpenMessage(true);
+        messageCloseFunc();
+        setMessage("Payment successful! Your order is arriving soon.");
+        dispatch(clearCart());
+
       },
       prefill: {
         name: user.name,
         email: user.email,
-        contact: "",
+        contact: "9999999999",
       },
       notes: {
         address: "",
       },
       theme: {
-        color: "#F37254",
+        color: "#FF6D00",
       },
     };
 
@@ -157,11 +155,11 @@ const cart = () => {
       <div className="max-w-4xl mx-auto p-4 h-screen">
         <h1 className=" font-bold mb-4">Your Cart</h1>
         <MessageFunc
-                message={message}
-                setMessageOpen={setOpenMessage}
-                messageOpen={openMessage}
-                onClose={() => setOpenMessage(false)}
-              />
+          message={message}
+          setMessageOpen={setOpenMessage}
+          messageOpen={openMessage}
+          onClose={() => setOpenMessage(false)}
+        />
         <div className="space-y-4">
           {cartItems.map((item) => (
             <div
@@ -242,17 +240,21 @@ const cart = () => {
         <div></div>
 
         <div className="mt-10 border-t border-gray-500 pt-4 md:flex justify-around hidden">
-         {Object?.keys(user)?.length>0?  <div
-            onClick={() => handlePayment()}
-            className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md"
-          >
-            Checkout
-          </div>:  <div
-            onClick={() => setOpen(true)}
-            className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md"
-          >
-           Login to Checkout
-          </div>}
+          {Object?.keys(user)?.length > 0 ? (
+            <div
+              onClick={() => handlePayment()}
+              className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md hover:bg-blue-800"
+            >
+              Checkout
+            </div>
+          ) : (
+            <div
+              onClick={() => setOpen(true)}
+              className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md hover:bg-blue-800"
+            >
+              Login to Checkout
+            </div>
+          )}
           <div className=" font-md">Quantity: {totalQuantity}</div>
           <div className=" font-md">Total: ₹ {totalAmount}</div>
         </div>

@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
       redirect: "follow",
     };
 
-    fetch("https://api-hosting.vercel.app/api/auth/login", requestOptions)
+    fetch("https://shop-now-backend-chi.vercel.app/api/auth/login", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.succss == true) {
