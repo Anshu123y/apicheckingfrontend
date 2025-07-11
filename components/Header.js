@@ -18,7 +18,6 @@ const Header = (props) => {
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const router = useRouter();
   
-  console.log(user,"user from header")
   return (
     <div
       className={
@@ -113,7 +112,7 @@ const Header = (props) => {
             {userOpen && (
               <div className="relative">
                 <div className="absolute right-1  w-fit  bg-gray-100 border border-gray-200 rounded-md shadow-lg z-50 p-3 text-sm">
-                  {user ? (
+                  {Object?.keys(user)?.length>0  ? (
                     <div>
                     <div className="w-full text-left font-medium text-gray-800 ">
                       {user.name}

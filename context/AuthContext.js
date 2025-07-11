@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const LogoutFunc = () => {
-    setUser(null);
+    setUser({});
     sessionStorage.removeItem("userDetails");
   };
 

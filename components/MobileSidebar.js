@@ -53,10 +53,10 @@ export default function MobileSidebar(props) {
         >
           <div>
             <div className="text-lg font-semibold">
-              {user ? user.name : "User"}
+              {Object?.keys(user)?.length>0 ? user.name : "User"}
             </div>
             <div className="text-[12px] font-semibold">
-              {user ? user.email : ""}
+              {Object?.keys(user)?.length>0 ? user.email : ""}
             </div>
           </div>
 
@@ -72,7 +72,7 @@ export default function MobileSidebar(props) {
           <a href="/cart" className="">
             Cart
           </a>
-          {user ? (
+          {Object?.keys(user)?.length>0 ? (
             <div onClick={() => setOpenConfirmModal(true)} className=" ">
               Log Out
             </div>
