@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { ThemeColor } from "@/pages/theme_context";
+import { ThemeColor } from "@/context/ThemeContext";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 

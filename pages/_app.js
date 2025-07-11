@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
-import ThemeContextFunc from './theme_context';
+import ThemeContextFunc from '../context/ThemeContext';
+import AuthProvider  from '../context/AuthContext';
 import Layout from "@/components/Layout";
 
 import { Provider } from "react-redux";
@@ -9,12 +10,14 @@ import CartDataStoreInLocalStorage from "@/components/CartDataStoreInLocalStorag
 export default function App({ Component, pageProps }) {
   return (
     <Provider store={store}>
+      <AuthProvider>
       <ThemeContextFunc>
         <CartDataStoreInLocalStorage/>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </ThemeContextFunc>
+        </ThemeContextFunc>
+        </AuthProvider>
     </Provider>
   );
 }

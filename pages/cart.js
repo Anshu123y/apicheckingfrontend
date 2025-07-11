@@ -11,16 +11,14 @@ import Head from "next/head";
 import SignInUpLofinForm from "@/components/SignInUpLofinForm";
 
 const cart = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  
   const [open, setOpen] = useState(false);
 
   const dispatch = useDispatch();
   const { cartItems, totalQuantity, totalAmount } = useSelector(
     (state) => state.cart
   );
-  const handleSubmit = (e) => {
+ /*  const handleSubmitSignUp = (e) => {
     e.preventDefault();
 
     const myHeaders = new Headers();
@@ -52,6 +50,39 @@ const cart = () => {
         console.error("Signup Error:", error);
       });
   };
+
+  const handleSubmitLogin = (e) => {
+    e.preventDefault();
+  
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+  
+    const raw = JSON.stringify({
+     
+      email,
+      password
+    });
+  
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+  
+    fetch("https://shop-now-backend-chi.vercel.app/api/auth/login", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("Signup Success:", result);
+        setOpen(false)
+        sessionStorage.setItem("NAME", result.name);
+        // Optional: Show success message or redirect
+      })
+      .catch((error) => {
+        console.error("Signup Error:", error);
+        
+      });
+  }; */
   /* If there is no Item In Cart */
   if (cartItems.length === 0) {
     return (
@@ -103,13 +134,7 @@ const cart = () => {
       <SignInUpLofinForm
         setOpen={setOpen}
         open={open}
-        setPassword={setPassword}
-        password={password}
-        setEmail={setEmail}
-        email={email}
-        setName={setName}
-        name={name}
-        handleSubmit={handleSubmit}
+       
       />
       <div className="max-w-4xl mx-auto p-4 h-screen">
         <h1 className=" font-bold mb-4">Your Cart</h1>
@@ -195,10 +220,17 @@ const cart = () => {
        
         </div>
 
-        <div className="mt-10 border-t border-gray-500 pt-4 text-right">
-        <p onClick={()=>setOpen(true)} className="mt-10 border-t border-gray-500 pt-4 text-left">Checkout</p>
-          <p className=" font-md">Total Quantity: {totalQuantity}</p>
-          <p className=" font-md">Total: ₹ {totalAmount}</p>
+        <div className="mt-10 border-t border-gray-500 pt-4 md:flex justify-around hidden">
+        <div onClick={()=>setOpen(true)} className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md">Checkout</div>
+          <div className=" font-md">Quantity: {totalQuantity}</div>
+          <div className=" font-md">Total: ₹ {totalAmount}</div>
+        </div>
+
+        <div className="mt-10 border-t border-gray-500 pt-4 block md:hidden ">
+          <div className=" font-md">Quantity: {totalQuantity}</div>
+          <div className=" font-md">Total: ₹ {totalAmount}</div>
+        <div onClick={()=>setOpen(true)} className="font-md cursor-pointer t bg-blue-500 text-white p-2 w-fit mt-2 rounded-md">Checkout</div>
+
         </div>
       </div>
     </>
