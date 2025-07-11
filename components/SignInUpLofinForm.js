@@ -6,27 +6,34 @@ import MessageFunc from "./Message";
 
 const SignInUpLofinForm = (props) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showSignin, setShowSignin] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
 
   const cancelButtonRef = useRef(null);
 
   const { theme } = useContext(ThemeColor);
-  const { handleSubmitSignUp, handleSubmitLogin , messageText,
+  const {
+    handleSubmitSignUp,
+    handleSubmitLogin,
+    messageText,
     setMessageOpen,
-    messageOpen} = useContext(AuthContext); 
+    messageOpen,
+    showSignin,
+    setShowSignin,
+    signUpLoader,
+  } = useContext(AuthContext);
   /* SignUp */
   const signUpHandleSubmit = (e) => {
-    e.preventDefault();
-    handleSubmitSignUp({ name, email, password })
-  };
   
+    e.preventDefault();
+    handleSubmitSignUp({ name, email, password });
+  };
+
   const loginHandleSubmit = (e) => {
     e.preventDefault();
-    handleSubmitLogin({ email, password })
+    handleSubmitLogin({ email, password });
+   
   };
   return (
     <Transition.Root show={props.open} as={Fragment} className="p-2 m-2 ">
@@ -66,12 +73,12 @@ const SignInUpLofinForm = (props) => {
               }  overflow-x-auto w-fit   sm:p-6`}
             >
               {/* Your code here */}
-               <MessageFunc
-        message={messageText}
-        setMessageOpen={setMessageOpen}
-        messageOpen={messageOpen}
-        onClose={() => setMessageOpen(false)}
-      />
+              <MessageFunc
+                message={messageText}
+                setMessageOpen={setMessageOpen}
+                messageOpen={messageOpen}
+                onClose={() => setMessageOpen(false)}
+              />
               <div className="flex justify-end items-end gap-6">
                 <div className="mt-2">
                   <button
@@ -102,11 +109,7 @@ const SignInUpLofinForm = (props) => {
 
               <div className="flex items-center justify-center h-fit mt-6 ">
                 <form
-                  onSubmit={
-                    showSignin
-                      ? signUpHandleSubmit
-                      : loginHandleSubmit
-                  }
+                  onSubmit={showSignin ? signUpHandleSubmit : loginHandleSubmit}
                   className=" p-6 rounded-xl   w-full max-w-sm space-y-4"
                 >
                   {showSignin && (
@@ -156,12 +159,19 @@ const SignInUpLofinForm = (props) => {
                     </div>
                   </div>
 
-                  <button
+                  {signUpLoader ?
+                    <div
+                  
+                    className="w-full cursor-none bg-gray-500 text-white py-2 rounded-lg hover:bg-blue-700 transition text-center"
+                  >
+                    ...Loading
+                  </div>
+                  : <button
                     type="submit"
                     className="w-full cursor-pointer bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700 transition"
                   >
                     {showSignin ? "Sign Up" : "Login"}
-                  </button>
+                  </button>}
 
                   <div
                     onClick={() => setShowSignin(!showSignin)}

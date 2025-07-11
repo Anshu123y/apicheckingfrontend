@@ -2,15 +2,18 @@ import { useContext, useState } from "react";
 import { ThemeColor } from "@/context/ThemeContext";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import { AuthContext } from "@/context/AuthContext";
+import MobileSidebar from "./MobileSidebar";
 
 const Header = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, ToggleFunc } = useContext(ThemeColor);
+  const { LogoutFunc, user, signUpModelOpen, setSignUpModelOpen } =
+    useContext(AuthContext);
 
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const router = useRouter();
-
   return (
     <div
       className={
@@ -24,12 +27,15 @@ const Header = (props) => {
         <div className="flex justify-start items-start gap-6">
           <div
             onClick={() => router.push("/")}
-            className="text-white mt-3  font-semibold sm:text-[14px] text-[12px] flex gap-1 cursor-pointer "
+            className="text-white mt-3  font-semibold sm:text-[14px] text-[12px] md:flex gap-1 cursor-pointer hidden"
           >
             <img
               className="h-[100px] w-[100px] object-contain -mt-2 "
               src="/logo.png"
             />
+          </div>
+          <div className="text-white mt-3  font-semibold sm:text-[14px] text-[12px] flex gap-1 cursor-pointer md:hidden">
+            <MobileSidebar theme={theme} />
           </div>
         </div>
       </div>
@@ -83,23 +89,26 @@ const Header = (props) => {
           </div>
         </div>
         {/* User Information section */}
-        <div className="flex flex-col items-center mt-2">
+        <div className="md:flex flex-col items-center mt-2 hidden">
           <div
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
             className="relative inline-block"
           >
             <div className="flex justify-center items-center   cursor-pointer mt-3 font-semibold text-[12px] ">
-              <button className="text-center pr-1">User Name</button>
+              {user ? (
+                <button className="text-center pr-1">{user.name}</button>
+              ) : (
+                <button className="text-center pr-1">Login</button>
+              )}
             </div>
           </div>
-          <div className="text-white font-semibold text-[14px] pr-1 mt-2">
+          <div className="text-white font-semibold text-[14px] pr-1 mt-2 ">
             <div
               onClick={() => setOpen(true)}
               className="w-8 h-8 cursor-pointer"
             >
               <img src="/power-off.png" />
-              {/*  <p className="text-[14px]">Logout</p> */}
             </div>
           </div>
         </div>

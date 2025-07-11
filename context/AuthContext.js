@@ -3,16 +3,19 @@ import { createContext, useContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState({});
-    const [messageText, setMessageText] = useState("");
-    const [messageOpen, setMessageOpen] = useState(false);
+  const [user, setUser] = useState({});
+  const [messageText, setMessageText] = useState("");
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [showSignin, setShowSignin] = useState(false);
+  const [signUpModelOpen, setSignUpModelOpen] = useState(false);
+  const [signUpLoader, setSignUpLoader] = useState(false);
 
-  useEffect(() => {
+/*   useEffect(() => {
     const storedUser = sessionStorage.getItem("userDetails");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);
+  }, [user]); */
   const messageCloseFunc = () => {
     setTimeout(() => {
       setMessageOpen(false);
@@ -20,6 +23,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleSubmitSignUp = ({ name, email, password }) => {
+    setSignUpLoader(true);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -43,19 +47,22 @@ export const AuthProvider = ({ children }) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.succss == true) {
-            setMessageText(result.message)
-            setMessageOpen(true)
-            messageCloseFunc()
+          setShowSignin(false);
+          setMessageText("Signup successful.Please Login.");
+          setMessageOpen(true);
+          messageCloseFunc();
         }
       })
       .catch((error) => {
-        setMessageText(result.message)
-          setMessageOpen(true)
-          messageCloseFunc()
-      });
+        setMessageText(result.message);
+        setMessageOpen(true);
+        messageCloseFunc();
+      })
+      .finally(() => setSignUpLoader(false));
   };
 
   const handleSubmitLogin = ({ email, password }) => {
+    setSignUpLoader(true);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -71,29 +78,29 @@ export const AuthProvider = ({ children }) => {
       redirect: "follow",
     };
 
-    fetch(
-      "https://api-hosting.vercel.app/api/auth/login",
-      requestOptions
-    )
+    fetch("https://api-hosting.vercel.app/api/auth/login", requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result.succss == true) {
-            sessionStorage.setItem("userDetails", JSON.stringify(result));
-            setMessageText(result.message)
-            setMessageOpen(true)
-            messageCloseFunc()
+          setUser(result)
+         // sessionStorage.setItem("userDetails", JSON.stringify(result));
+          setMessageText(result.message);
+          setMessageOpen(true);
+          messageCloseFunc();
+          setSignUpModelOpen(false);
         }
       })
       .catch((error) => {
-        setMessageText(result.message)
-          setMessageOpen(true)
-          messageCloseFunc()
-      });
+        setMessageText(result.message);
+        setMessageOpen(true);
+        messageCloseFunc();
+      })
+      .finally(() => setSignUpLoader(false));
   };
 
   const LogoutFunc = () => {
     setUser(null);
-    sessionStorage.removeItem("userDetails");
+  //  sessionStorage.removeItem("userDetails");
   };
 
   return (
@@ -102,10 +109,17 @@ export const AuthProvider = ({ children }) => {
         user,
         handleSubmitLogin,
         handleSubmitSignUp,
-              LogoutFunc,
-              setMessageText,
-              setMessageOpen,
-              messageOpen,messageText
+        LogoutFunc,
+        setMessageText,
+        setMessageOpen,
+        messageOpen,
+        messageText,
+        setSignUpLoader,
+        signUpLoader,
+        setSignUpModelOpen,
+        signUpModelOpen,
+        setShowSignin,
+        showSignin,
       }}
     >
       {children}
@@ -113,4 +127,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 export default AuthProvider;
-

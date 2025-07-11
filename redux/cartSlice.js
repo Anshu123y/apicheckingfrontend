@@ -26,7 +26,7 @@ const cartSlice = createSlice({
       }
 
       cartSlice.caseReducers.calculateTotals(state);
-      saveToLocalStorage(state); // ✅
+      saveToLocalStorage(state); 
     },
 
     removeFromCart(state, action) {
@@ -43,7 +43,7 @@ const cartSlice = createSlice({
         item.quantity += 1;
       }
       cartSlice.caseReducers.calculateTotals(state);
-      saveToLocalStorage(state); // ✅
+      saveToLocalStorage(state); 
     },
 
     decreaseQuantity(state, action) {
@@ -56,7 +56,7 @@ const cartSlice = createSlice({
         );
       }
       cartSlice.caseReducers.calculateTotals(state);
-      saveToLocalStorage(state); // ✅
+      saveToLocalStorage(state); 
     },
 
     clearCart(state) {

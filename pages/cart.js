@@ -18,71 +18,7 @@ const cart = () => {
   const { cartItems, totalQuantity, totalAmount } = useSelector(
     (state) => state.cart
   );
- /*  const handleSubmitSignUp = (e) => {
-    e.preventDefault();
-
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify({
-      name,
-      email,
-      password,
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
-
-    fetch(
-      "https://shop-now-backend-chi.vercel.app/api/auth/signup",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("Signup Success:", result);
-        // Optional: Show success message or redirect
-      })
-      .catch((error) => {
-        console.error("Signup Error:", error);
-      });
-  };
-
-  const handleSubmitLogin = (e) => {
-    e.preventDefault();
-  
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-  
-    const raw = JSON.stringify({
-     
-      email,
-      password
-    });
-  
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow"
-    };
-  
-    fetch("https://shop-now-backend-chi.vercel.app/api/auth/login", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("Signup Success:", result);
-        setOpen(false)
-        sessionStorage.setItem("NAME", result.name);
-        // Optional: Show success message or redirect
-      })
-      .catch((error) => {
-        console.error("Signup Error:", error);
-        
-      });
-  }; */
+ 
   /* If there is no Item In Cart */
   if (cartItems.length === 0) {
     return (
