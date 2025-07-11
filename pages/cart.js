@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   removeFromCart,
@@ -9,16 +9,84 @@ import PathBackButton from "@/components/PathBackButton";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import SignInUpLofinForm from "@/components/SignInUpLofinForm";
+import { AuthContext } from "@/context/AuthContext";
 
 const cart = () => {
-  
   const [open, setOpen] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const dispatch = useDispatch();
   const { cartItems, totalQuantity, totalAmount } = useSelector(
     (state) => state.cart
   );
- 
+
+  // Function to load the Razorpay script dynamically
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      // Check if the script is already loaded
+      if (
+        document.querySelector(
+          'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+        )
+      ) {
+        return resolve(true); // Already loaded
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  // Function to handle the Razorpay payment
+  const handlePayment = async () => {
+    // Load Razorpay script
+    const res = await loadRazorpayScript();
+
+    if (!res) {
+      alert("Failed to load Razorpay SDK. Please try again later.");
+      return;
+    }
+
+    // Get order data from your API
+    const data = await fetch("/api/razorpay", {
+      method: "POST",
+    }).then((res) => res.json());
+
+    // Options for the Razorpay checkout modal
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Public Key from Razorpay dashboard
+      amount: totalAmount, // Amount in paise
+      currency: data.currency,
+      name: "ShoNow",
+      description: "Test Transaction",
+      order_id: data.id, // The order ID received from Razorpay API
+      handler: function (response) {
+        alert("Payment successful!");
+        console.log("Payment ID:", response.razorpay_payment_id);
+        console.log("Order ID:", response.razorpay_order_id);
+        console.log("Signature:", response.razorpay_signature);
+      },
+      prefill: {
+        name: user.name,
+        email: user.email,
+        contact: "",
+      },
+      notes: {
+        address: "",
+      },
+      theme: {
+        color: "#F37254",
+      },
+    };
+
+    // Open the Razorpay payment modal
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+  };
+
   /* If there is no Item In Cart */
   if (cartItems.length === 0) {
     return (
@@ -67,11 +135,7 @@ const cart = () => {
         <meta property="og:image:height" content="200" />
       </Head>
       <PathBackButton />
-      <SignInUpLofinForm
-        setOpen={setOpen}
-        open={open}
-       
-      />
+      <SignInUpLofinForm setOpen={setOpen} open={open} />
       <div className="max-w-4xl mx-auto p-4 h-screen">
         <h1 className=" font-bold mb-4">Your Cart</h1>
 
@@ -152,12 +216,20 @@ const cart = () => {
             </div>
           ))}
         </div>
-        <div>
-       
-        </div>
+        <div></div>
 
         <div className="mt-10 border-t border-gray-500 pt-4 md:flex justify-around hidden">
-        <div onClick={()=>setOpen(true)} className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md">Checkout</div>
+         {Object?.keys(user)?.length>0?  <div
+            onClick={() => handlePayment()}
+            className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md"
+          >
+            Checkout
+          </div>:  <div
+            onClick={() => setOpen(true)}
+            className="font-md cursor-pointer bg-blue-500 text-white p-2 rounded-md"
+          >
+           Login to Checkout
+          </div>}
           <div className=" font-md">Quantity: {totalQuantity}</div>
           <div className=" font-md">Total: ₹ {totalAmount}</div>
         </div>
@@ -165,8 +237,21 @@ const cart = () => {
         <div className="mt-10 border-t border-gray-500 pt-4 block md:hidden ">
           <div className=" font-md">Quantity: {totalQuantity}</div>
           <div className=" font-md">Total: ₹ {totalAmount}</div>
-        <div onClick={()=>setOpen(true)} className="font-md cursor-pointer t bg-blue-500 text-white p-2 w-fit mt-2 rounded-md">Checkout</div>
-
+          {Object?.keys(user)?.length > 0 ? (
+            <div
+              onClick={() => handlePayment()}
+              className="font-md cursor-pointer t bg-blue-500 text-white p-2 w-fit mt-2 rounded-md"
+            >
+              Checkout
+            </div>
+          ) : (
+            <div
+              onClick={() => setOpen(true)}
+              className="font-md cursor-pointer t bg-blue-500 text-white p-2 w-fit mt-2 rounded-md"
+            >
+              Login to Checkout
+            </div>
+          )}
         </div>
       </div>
     </>

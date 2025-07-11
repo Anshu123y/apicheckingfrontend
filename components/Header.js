@@ -12,8 +12,7 @@ const Header = (props) => {
   const [signupLoginopen, setSignupLoginopen] = useState(false);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const { theme, ToggleFunc } = useContext(ThemeColor);
-  const { LogoutFunc, user, } =
-    useContext(AuthContext);
+  const { LogoutFunc, user, } =useContext(AuthContext);
 
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const router = useRouter();
